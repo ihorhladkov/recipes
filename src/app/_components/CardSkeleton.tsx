@@ -4,8 +4,8 @@ import { Card } from "./ui/card";
 
 export function CardSkeleton() {
   return (
-    <Card className="mt-4">
-      <div className="flex h-[250px] w-full  gap-x-4 rounded-sm bg-slate-400">
+    <Card>
+      <div className="flex h-[250px] w-full gap-x-4 rounded-sm">
         <div className="grid gap-4 pl-4 pt-4">
           <Skeleton className="h-8 w-[250px]" />
           <Skeleton className="h-4 w-[200px] " />
