@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <>
     {/* <CardSkeleton /> */}
-      <main className="flex flex-col items-center justify-center text-white">
+      <section className="flex flex-col items-center justify-center text-white">
         {/* <h1>Books: {counter} </h1> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           {recipeData?.map((recipe) => (
@@ -26,7 +26,7 @@ export default function Home() {
           ))}
         </div>
         {/* <Button onClick={increase}>Add amount</Button> */}
-      </main>
+      </section>
     </>
   );
 }
