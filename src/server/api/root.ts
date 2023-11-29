@@ -1,4 +1,8 @@
 import { createTRPCRouter } from "~/server/api/trpc";
+// import { publicProcedure } from "./trpc";
+import { categoriesRouter } from "../api/routers/categories/categories";
+import { recipesRouter } from "../api/routers/recipes/resipes";
+import { inferRouterOutputs } from "@trpc/server";
 
 /**
  * This is the primary router for your server.
@@ -6,8 +10,10 @@ import { createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  
+  categoriesRouter,
+  recipesRouter,
 });
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;

@@ -14,11 +14,11 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 
 export const recipes = pgTable("recipes", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
-  description: text('description'),
-  shortDescription:  text('short_description'),
-  author: text("author"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  name: text("name").notNull(),
+  description: text('description').notNull(),
+  shortDescription:  text('short_description').notNull(),
+  author: text("author").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
   categoryId: uuid("categoryId").references(() => categories.id),
 });
 
@@ -27,7 +27,7 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
     fields: [recipes.categoryId],
     references: [categories.id],
   }),
-  ingredients: many(ingredients),
+  recipesToIngredients: many(recipesToIngredients),
 }));
 
 export const ingredients = pgTable("ingredients", {
@@ -37,10 +37,11 @@ export const ingredients = pgTable("ingredients", {
 });
 
 export const ingredientsRelations = relations(ingredients, ({ many }) => ({
-  recipe: many(recipes),
+  ingredientsToRecipes: many(recipesToIngredients),
 }));
 
 export const recipesToIngredients = pgTable("recipes_to_ingredients", {
+  id: uuid("id").defaultRandom().primaryKey(),
   recipeId: uuid("recipe_id")
     .notNull()
     .references(() => recipes.id),
