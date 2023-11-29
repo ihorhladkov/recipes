@@ -20,7 +20,7 @@ export default function Home() {
     {/* <CardSkeleton /> */}
       <main className="flex flex-col items-center justify-center text-white">
         {/* <h1>Books: {counter} </h1> */}
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           {recipeData?.map((recipe) => (
             <Card key={recipe.id} recipe={recipe} />
           ))}
