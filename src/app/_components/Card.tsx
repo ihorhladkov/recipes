@@ -1,4 +1,3 @@
-import { BellRing, Check } from "lucide-react";
 import { cn } from "../lib/utils";
 import {
   Card,
@@ -9,68 +8,48 @@ import {
   CardTitle,
 } from "./ui/card";
 
-import { Button } from "./ui/button";
+// import { Button } from "./ui/button";
+import { RouterOutputs } from "~/trpc/shared";
 
-const notifications = [
-  {
-    title: "Your call has been confirmed.",
-    description: "1 hour ago",
-  },
-  {
-    title: "You have a new message!",
-    description: "1 hour ago",
-  },
-  {
-    title: "Your subscription is expiring soon!",
-    description: "2 hours ago",
-  },
-];
-
-type CardProps = React.ComponentProps<typeof Card>;
-
-export default function CardDemo({ className, ...props }: CardProps) {
+export default function CardDemo({
+  recipe,
+}: {
+  recipe: RouterOutputs["recipesRouter"]["getSortedRecipes"][number];
+}) {
   return (
-    <Card className={cn("w-[290px]", className)} {...props}>
+    <Card className={cn("w-[500px]")}>
       <CardHeader>
-        <CardTitle>Notifications</CardTitle>
-        <CardDescription>You have 3 unread messages.</CardDescription>
+        <CardTitle>{recipe.name}</CardTitle>
+        <CardDescription>{recipe.shortDescription}</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <BellRing />
-          <div className="flex-1 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              Push Notifications
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Send notifications to device.
-            </p>
-          </div>
-        </div>
+      <CardContent className="flex flex-col justify-between gap-4">
         <div>
-          {notifications.map((notification, index) => (
+          <p className="mb-6 text-sm font-medium uppercase leading-none">
+            Ingredients
+          </p>
+          {recipe.recipesToIngredients.map((ingedient) => (
             <div
-              key={index}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+              key={ingedient.id}
+              className=" grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
             >
               <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {notification.title}
+                  {`${ingedient.ingredient.name} `}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {notification.description}
+                  {/* {notification.description} */}
                 </p>
               </div>
             </div>
           ))}
         </div>
       </CardContent>
-      <CardFooter>
+      {/* <CardFooter>
         <Button className="w-full">
           <Check className="mr-2 h-4 w-4" /> Mark all as read
         </Button>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }
