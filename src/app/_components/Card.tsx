@@ -17,7 +17,7 @@ export default function CardDemo({
   recipe: RouterOutputs["recipesRouter"]["getSortedRecipes"][number];
 }) {
   return (
-    <Card className={cn("w-full flex flex-col")}>
+    <Card className="w-full h-[250px] flex flex-col">
       <CardHeader>
         <CardTitle>{recipe.name}</CardTitle>
         <CardDescription>{recipe.shortDescription}</CardDescription>
