@@ -14,11 +14,14 @@ import { create } from "zustand";
 // }));
 
 interface Count {
-    counter: number
-    increase: () => void
+  ingredients: string[];
+  increase: (arrayOfIngredients: string) => void;
 }
 
 export const useCountStore = create<Count>((set) => ({
-    counter: 1,
-    increase: () => set((state) => ({counter: state.counter + 1}))
-}))
+  ingredients: [],
+  increase: (ingredients: string) =>
+    set((state) => ({
+      ingredients: [...state.ingredients, ingredients],
+    })),
+}));
