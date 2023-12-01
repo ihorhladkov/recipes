@@ -1,12 +1,14 @@
 import { create } from "zustand";
+
 interface Count {
   ingredients: string[];
-  increase: (arrayOfIngredients: string) => void;
+  addIngredient: (arrayOfIngredients: string) => void;
+  clearIngredients: () => void;
 }
 
-export const useCountStore = create<Count>((set) => ({
+export const useIngredientStore = create<Count>((set) => ({
   ingredients: [],
-  increase: (ingredient: string) =>
+  addIngredient: (ingredient: string) =>
     set((state) => ({
       ingredients: state.ingredients.includes(ingredient)
         ? state.ingredients.filter(
@@ -14,4 +16,5 @@ export const useCountStore = create<Count>((set) => ({
           )
         : [...state.ingredients, ingredient],
     })),
+  clearIngredients: () => set({ ingredients: [] }),
 }));

@@ -1,13 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
@@ -23,7 +21,7 @@ import {
 } from "./ui/command";
 import { RouterOutputs } from "~/trpc/shared";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useCountStore } from "~/store/store";
+import { useIngredientStore } from "~/store/store";
 import { api } from "~/trpc/react";
 import { Input } from "./ui/input";
 
@@ -41,8 +39,8 @@ export function ComboboxDemo({
   const { register, handleSubmit, getValues } = methods;
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const chosedIngredients = useCountStore((state) => state.increase);
-  const ingredientsIds = useCountStore((state) => state.ingredients);
+  const chosedIngredients = useIngredientStore((state) => state.addIngredient);
+  const ingredientsIds = useIngredientStore((state) => state.ingredients);
   const { mutate: addIngredient } =
     api.ingredientsRouter.addNewIngredient.useMutation({
       onSuccess() {
@@ -59,7 +57,7 @@ export function ComboboxDemo({
   return (
     <Select>
       <SelectTrigger className="w-[230px]">
-        <SelectValue placeholder="Select a category" />
+        <SelectValue placeholder="Select ingredients" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -73,7 +71,7 @@ export function ComboboxDemo({
                   onSubmit={handleSubmit(onSubmit)}
                 >
                   <Input
-                    {...register("name")}
+                    {...register("name", { required: true })}
                     className="z-10"
                     placeholder="Add new"
                     onKeyDown={handleKeyDown}
