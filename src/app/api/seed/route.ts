@@ -67,10 +67,10 @@ async function seed(res: NextApiResponse) {
     { name: "Olive Oil", id: "a5842a0b-3b47-4ed9-b4ab-5475f62e0499" },
   ];
 
-  await db.insert(categories).values(categoriesData);
-  await db.insert(recipes).values(recipesData);
-  await db.insert(ingredients).values(ingredientsData);
+  // await db.insert(categories).values(categoriesData);
+  // await db.insert(recipes).values(recipesData);
+  // await db.insert(ingredients).values(ingredientsData);
   return new Response("ok");
 }
 
-export { seed as GET };
+// export { seed as GET };
