@@ -22,7 +22,6 @@ import { Textarea } from "./ui/textarea";
 import { api } from "~/trpc/react";
 import { SelectScrollable } from "./Select";
 import { ComboboxDemo } from "./Combobox";
-import { ingredients } from "~/server/db/schema";
 import { useCountStore } from "~/store/store";
 
 interface Inputs {
@@ -30,15 +29,16 @@ interface Inputs {
   author: string;
   short_description: string;
   full_description: string;
-  ingredients: {
-    ingredientId: string;
-    id: string;
-  }[];
+  categoryId: string;
+  ingredients: string[];
 }
 
 export function Modal() {
+  const utils = api.useUtils();
   const methods = useForm<Inputs>();
   const { data: categories } = api.categoriesRouter.getCategory.useQuery();
+  const { mutate: createRecipe } =
+    api.recipesRouter.createNewRecipe.useMutation();
   const { data: ingredients } =
     api.ingredientsRouter.getAllIngredients.useQuery();
   const ingredientsIds = useCountStore((state) => state.ingredients);
@@ -52,7 +52,16 @@ export function Modal() {
 
   const { register, handleSubmit } = methods;
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log({...data, ingredientsIds});
+  const onSubmit: SubmitHandler<Inputs> = (data) =>
+  // console.log(data)  
+  createRecipe({
+      name: data.name,
+      shortDescription: data.short_description,
+      description: data.full_description,
+      author: data.author,
+      ingredients: ingredientsIds,
+      categoryId: data.categoryId,
+    });
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -94,12 +103,12 @@ export function Modal() {
                   placeholder="Write full description of your recipe"
                 />
 
-                <Label htmlFor="name">Categories</Label>
+                <Label htmlFor="name">Ingredients</Label>
                 <div className="col-span-3">
                   <ComboboxDemo ingredients={ingredients} />
                 </div>
 
-                <Label htmlFor="name">Ingredients</Label>
+                <Label htmlFor="name">Categories</Label>
                 <SelectScrollable categories={categories} />
               </div>
             </div>

@@ -2,6 +2,15 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
@@ -12,64 +21,95 @@ import {
   CommandInput,
   CommandItem,
 } from "./ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { RouterOutputs } from "~/trpc/shared";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useCountStore } from "~/store/store";
+import { api } from "~/trpc/react";
+import { Input } from "./ui/input";
+
+interface Input {
+  name: string;
+}
 
 export function ComboboxDemo({
   ingredients,
 }: {
   ingredients: RouterOutputs["ingredientsRouter"]["getAllIngredients"][number][];
 }) {
+  const utils = api.useUtils();
+  const methods = useForm<Input>({ mode: "onChange" });
+  const { register, handleSubmit, getValues } = methods;
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const chosedIngredients = useCountStore(state => state.increase)
-  const ingredientsIds = useCountStore(state => state.ingredients)
-
+  const chosedIngredients = useCountStore((state) => state.increase);
+  const ingredientsIds = useCountStore((state) => state.ingredients);
+  const { mutate: addIngredient } =
+    api.ingredientsRouter.addNewIngredient.useMutation({
+      onSuccess() {
+        utils.ingredientsRouter.getAllIngredients.invalidate();
+      },
+    });
+  const onSubmit: SubmitHandler<Input> = (data) =>
+    addIngredient({ name: data.name });
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      addIngredient({ name: getValues("name") });
+    }
+  };
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value ? value : "Select framework..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
-          <CommandGroup>
-            {ingredients.map((ingredient, index) => (
-              <CommandItem
-                key={ingredient.id}
-                value={ingredient.name}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  // handeToggleIngredient(ingredient.id);
-                  chosedIngredients(ingredient.id)
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    ingredientsIds.includes(ingredient.id)
-                      ? "opacity-100"
-                      : "opacity-0",
-                  )}
-                />
-                {ingredient.name}
+    <Select>
+      <SelectTrigger className="w-[230px]">
+        <SelectValue placeholder="Select a category" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <Command>
+            <CommandInput placeholder="Search framework..." />
+            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandGroup className="h-[150px] overflow-y-scroll">
+              <CommandItem>
+                <form
+                  className="flex justify-between"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  <Input
+                    {...register("name")}
+                    className="z-10"
+                    placeholder="Add new"
+                    onKeyDown={handleKeyDown}
+                  />
+
+                  <Button className="ml-2">
+                    <Check className="h-4 w-4 opacity-100" />
+                  </Button>
+                </form>
               </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
+
+              {ingredients.map((ingredient) => (
+                <CommandItem
+                  key={ingredient.id}
+                  value={ingredient.name}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
+                    chosedIngredients(ingredient.id);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      ingredientsIds.includes(ingredient.id)
+                        ? "opacity-100"
+                        : "opacity-0",
+                    )}
+                  />
+                  {ingredient.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }
