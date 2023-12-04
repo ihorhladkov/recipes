@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 
 import {
   Select,
@@ -13,28 +13,50 @@ import {
 } from "./ui/select";
 import { RouterOutputs } from "~/trpc/shared";
 import { useFormContext } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
 export function SelectScrollable({
   categories,
 }: {
   categories: RouterOutputs["categoriesRouter"]["getCategory"][number][];
 }) {
-  const { setValue } = useFormContext();
+  const {
+    setValue,
+    getValues,
+    register,
+    formState: { errors },
+  } = useFormContext();
+
   return (
-    <Select onValueChange={(value) => setValue("categoryId", value)}>
-      <SelectTrigger className="w-[230px]">
-        <SelectValue placeholder="Select a category" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Categories</SelectLabel>
-          {categories.map((category) => (
-            <SelectItem key={category.id} value={category.id}>
-              {category.name}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <>
+      <Select
+        onValueChange={(value) =>
+          setValue("categoryId", value, { shouldValidate: true })
+        }
+      >
+        <SelectTrigger className="w-[230px]">
+          <SelectValue
+            {...register("categoryId", { required: "This is required" })}
+            placeholder="Select a category"
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Categories</SelectLabel>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <ErrorMessage
+        errors={errors}
+        name="categoryId"
+        render={({ message }) => <p className="mb-2 text-red-600">{message}</p>}
+      />
+    </>
   );
 }

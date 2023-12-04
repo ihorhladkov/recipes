@@ -18,6 +18,7 @@ import { SelectScrollable } from "./Select";
 import { ComboboxDemo } from "./Combobox";
 import { useIngredientStore } from "~/store/store";
 import { useState } from "react";
+import { ErrorMessage } from "@hookform/error-message";
 
 interface Inputs {
   name: string;
@@ -25,13 +26,33 @@ interface Inputs {
   short_description: string;
   full_description: string;
   categoryId: string;
-  ingredients: string[];
+  ingredients: {
+    name: string;
+  }[];
 }
+
+const initialData = {
+  name: "",
+  author: "",
+  short_description: "",
+  full_description: "",
+  categoryId: "",
+  ingredients: [],
+};
 
 export function Modal() {
   const [open, setOpen] = useState(false);
   const utils = api.useUtils();
-  const methods = useForm<Inputs>();
+  const methods = useForm<Inputs>({
+    defaultValues: {
+      name: "",
+      author: "",
+      short_description: "",
+      full_description: "",
+      categoryId: "",
+      ingredients: [],
+    },
+  });
 
   const { data: categories } = api.categoriesRouter.getCategory.useQuery();
 
@@ -39,36 +60,36 @@ export function Modal() {
     (state) => state.clearIngredients,
   );
 
-  const { mutate: createRecipe } =
+  const { mutate: createRecipe, isLoading } =
     api.recipesRouter.createNewRecipe.useMutation({
       onSuccess() {
         utils.recipesRouter.getAllRecipes.invalidate();
         utils.recipesRouter.getSortedRecipes.invalidate();
-        reset({
-          name: "",
-          author: "",
-          short_description: "",
-          full_description: "",
-          categoryId: "",
-          ingredients: [],
-        });
+        reset(initialData);
         clearIngredients();
-        setOpen(false)
+        setOpen(false);
       },
     });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    getValues,
+  } = methods;
 
   const { data: ingredients } =
     api.ingredientsRouter.getAllIngredients.useQuery();
   const ingredientsIds = useIngredientStore((state) => state.ingredients);
 
+  console.log(getValues());
+
   if (!categories || !ingredients) {
-    return <>1</>;
+    return <>Loading...</>;
   }
 
-  const { register, handleSubmit, reset } = methods;
-
-  const onSubmit: SubmitHandler<Inputs> = (data) =>
-    // console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
     createRecipe({
       name: data.name,
       shortDescription: data.short_description,
@@ -77,9 +98,16 @@ export function Modal() {
       ingredients: ingredientsIds,
       categoryId: data.categoryId,
     });
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        setOpen((prev) => !prev);
+        reset(initialData);
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="outline">Create New</Button>
       </DialogTrigger>
@@ -90,53 +118,110 @@ export function Modal() {
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name">Recipe Name</Label>
-                <Input
-                  {...register("name", { required: true })}
-                  id="name"
-                  defaultValue=""
-                  placeholder="Enter title of your recipe"
-                  className="col-span-3"
-                />
-                <Label htmlFor="author">Author Name</Label>
-                <Input
-                  {...register("author", { required: true })}
-                  id="name"
-                  defaultValue=""
-                  placeholder="What is your name?"
-                  className="col-span-3"
-                />
-                <Label htmlFor="short_description">Short description</Label>
-                <Textarea
-                  {...register("short_description", { required: true })}
-                  className="col-span-3"
-                  placeholder="Write short description of your recipe"
-                />
-
-                <Label htmlFor="name">Full description</Label>
-                <Textarea
-                  {...register("full_description", { required: true })}
-                  className="col-span-3"
-                  placeholder="Write full description of your recipe"
-                />
-
-                <Label htmlFor="name">Ingredients</Label>
+              <div>
                 <div className="col-span-3">
-                  <ComboboxDemo ingredients={ingredients} />
+                  <Label htmlFor="name">Recipe Name</Label>
+                  <Input
+                    {...register("name", {
+                      required: "This name is requierd.",
+                    })}
+                    id="name"
+                    defaultValue=""
+                    placeholder="Enter title of your recipe"
+                    className="col-span-3"
+                  />
+
+                  <ErrorMessage
+                    errors={errors}
+                    name="name"
+                    render={({ message }) => (
+                      <p className="mb-2 text-red-600">{message}</p>
+                    )}
+                  />
                 </div>
 
-                <Label htmlFor="name">Categories</Label>
-                <SelectScrollable categories={categories} />
+                <div className="col-span-3">
+                  <Label htmlFor="author">Author Name</Label>
+                  <Input
+                    {...register("author", {
+                      required: "This author name is requierd.",
+                    })}
+                    id="name"
+                    defaultValue=""
+                    placeholder="What is your name?"
+                    className="col-span-3"
+                  />
+
+                  <ErrorMessage
+                    errors={errors}
+                    name="author"
+                    render={({ message }) => (
+                      <p className="mb-2 text-red-600">{message}</p>
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-3">
+                  <Label htmlFor="short_description">Short description</Label>
+                  <Textarea
+                    {...register("short_description", {
+                      required: "This short description is requierd.",
+                    })}
+                    className="col-span-3"
+                    placeholder="Write short description of your recipe"
+                  />
+
+                  <ErrorMessage
+                    errors={errors}
+                    name="short_description"
+                    render={({ message }) => (
+                      <p className="mb-2 text-red-600">{message}</p>
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-3">
+                  <Label htmlFor="name">Full description</Label>
+                  <Textarea
+                    {...register("full_description", {
+                      required: "This full description is requierd.",
+                    })}
+                    className="col-span-3"
+                    placeholder="Write full description of your recipe"
+                  />
+
+                  <ErrorMessage
+                    errors={errors}
+                    name="full_description"
+                    render={({ message }) => (
+                      <p className="mb-2 text-red-600">{message}</p>
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-3">
+                  <Label htmlFor="name">Ingredients</Label>
+                  <div className="col-span-3">
+                    <ComboboxDemo ingredients={ingredients} />
+                  </div>
+                </div>
+
+                <div className="col-span-3">
+                  <Label htmlFor="name">Categories</Label>
+                  <SelectScrollable categories={categories} />
+                </div>
               </div>
             </div>
+
             <DialogFooter>
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
                   Close
                 </Button>
               </DialogClose>
-              <Button type="submit">Create</Button>
+              <Button type="submit">
+                {isLoading ? "Submiting..." : "Create"}
+              </Button>
             </DialogFooter>
           </form>
         </FormProvider>
