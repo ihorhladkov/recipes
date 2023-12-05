@@ -26,7 +26,6 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form";
-import { useIngredientStore } from "~/store/store";
 import { api } from "~/trpc/react";
 import { Input } from "./ui/input";
 
@@ -43,9 +42,6 @@ export function ComboboxDemo({
   const [value, setValue] = React.useState("");
   const methods = useForm<Input>({ mode: "onChange" });
   const { register, handleSubmit, getValues } = methods;
-  const chosedIngredients = useIngredientStore((state) => state.addIngredient);
-  const ingredientsIds = useIngredientStore((state) => state.ingredients);
-  console.log(ingredientsIds);
 
   const {
     control,
@@ -53,18 +49,23 @@ export function ComboboxDemo({
     getValues: getIngredientValues,
   } = useFormContext();
 
-  const { append } = useFieldArray({
+  const data = getIngredientValues();
+
+  const { append, remove } = useFieldArray({
     control,
     name: "ingredients",
     rules: {
       required: "Important field",
     },
   });
-  
+
   const { mutate: addIngredient } =
     api.ingredientsRouter.addNewIngredient.useMutation({
       onSuccess() {
         utils.ingredientsRouter.getAllIngredients.invalidate();
+      },
+      onError() {
+        console.log("error");
       },
     });
 
@@ -74,6 +75,18 @@ export function ComboboxDemo({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       addIngredient({ name: getValues("name") });
+    }
+  };
+
+  const toggleIngredinet = (ingredientId: string) => {
+    const index = data.ingredients.findIndex(
+      (elem: string) => ingredientId === elem,
+    );
+
+    if (index === -1) {
+      append(ingredientId);
+    } else {
+      remove(index);
     }
   };
 
@@ -108,14 +121,15 @@ export function ComboboxDemo({
                     value={ingredient.name}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
-                      chosedIngredients(ingredient.id);
-                      append({ name: ingredient.id });
+                      toggleIngredinet(ingredient.id);
                     }}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        ingredientsIds.includes(ingredient.id)
+                        getIngredientValues().ingredients.includes(
+                          ingredient.id,
+                        )
                           ? "opacity-100"
                           : "opacity-0",
                       )}

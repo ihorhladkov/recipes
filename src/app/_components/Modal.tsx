@@ -16,7 +16,6 @@ import { Textarea } from "./ui/textarea";
 import { api } from "~/trpc/react";
 import { SelectScrollable } from "./Select";
 import { ComboboxDemo } from "./Combobox";
-import { useIngredientStore } from "~/store/store";
 import { useState } from "react";
 import { ErrorMessage } from "@hookform/error-message";
 
@@ -26,9 +25,7 @@ interface Inputs {
   short_description: string;
   full_description: string;
   categoryId: string;
-  ingredients: {
-    name: string;
-  }[];
+  ingredients: string[];
 }
 
 const initialData = {
@@ -56,9 +53,6 @@ export function Modal() {
 
   const { data: categories } = api.categoriesRouter.getCategory.useQuery();
 
-  const clearIngredients = useIngredientStore(
-    (state) => state.clearIngredients,
-  );
 
   const { mutate: createRecipe, isLoading } =
     api.recipesRouter.createNewRecipe.useMutation({
@@ -66,7 +60,6 @@ export function Modal() {
         utils.recipesRouter.getAllRecipes.invalidate();
         utils.recipesRouter.getSortedRecipes.invalidate();
         reset(initialData);
-        clearIngredients();
         setOpen(false);
       },
     });
@@ -75,18 +68,19 @@ export function Modal() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
     getValues,
+    formState: { errors },
   } = methods;
+
+  const getIngredinetIds = getValues().ingredients.map(
+    (ingredinet) => ingredinet,
+  );
 
   const { data: ingredients } =
     api.ingredientsRouter.getAllIngredients.useQuery();
-  const ingredientsIds = useIngredientStore((state) => state.ingredients);
-
-  console.log(getValues());
-
+  console.log(getIngredinetIds);
   if (!categories || !ingredients) {
-    return <>Loading...</>;
+    return <Button className="bg-white w-[111px] text-black">Loading...</Button>;
   }
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -95,7 +89,7 @@ export function Modal() {
       shortDescription: data.short_description,
       description: data.full_description,
       author: data.author,
-      ingredients: ingredientsIds,
+      ingredients: getIngredinetIds,
       categoryId: data.categoryId,
     });
   };
@@ -126,7 +120,6 @@ export function Modal() {
                       required: "This name is requierd.",
                     })}
                     id="name"
-                    defaultValue=""
                     placeholder="Enter title of your recipe"
                     className="col-span-3"
                   />
@@ -147,7 +140,6 @@ export function Modal() {
                       required: "This author name is requierd.",
                     })}
                     id="name"
-                    defaultValue=""
                     placeholder="What is your name?"
                     className="col-span-3"
                   />

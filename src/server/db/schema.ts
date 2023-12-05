@@ -32,7 +32,7 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
 
 export const ingredients = pgTable("ingredients", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
