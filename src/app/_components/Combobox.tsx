@@ -24,6 +24,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { Input } from "./ui/input";
 import { toast } from "./ui/use-toast";
+import Loader from "./Loader";
 
 interface Input {
   name: string;
@@ -51,12 +52,12 @@ export function Combobox({
       required: "Ingredients are required.",
       minLength: {
         value: 3,
-        message: 'Must contain at list 3 items.'
-      }
+        message: "Must contain at list 3 items.",
+      },
     },
   });
 
-  const { mutate: addIngredient } =
+  const { mutate: addIngredient, isLoading } =
     api.ingredientsRouter.addNewIngredient.useMutation({
       onSuccess() {
         utils.ingredientsRouter.getAllIngredients.invalidate();
@@ -64,6 +65,7 @@ export function Combobox({
           title: "Success",
           description: "The ingredinet was successfully added.",
         });
+        setNewIngredinet("");
       },
       onError() {
         toast({
@@ -105,22 +107,27 @@ export function Combobox({
           <SelectGroup>
             <Command>
               <CommandInput placeholder="Search framework..." />
-              <CommandEmpty>No framework found.</CommandEmpty>
-              <CommandGroup className="h-[150px] overflow-y-scroll">
-                <CommandItem>
+              <CommandEmpty>
+                <p className="mb-3">No ingredients found</p>
+                <div className="mx-3 flex">
                   <Input
                     value={newIngredient}
-                    className="z-10"
+                    className=""
                     placeholder="Add new"
                     onChange={(e) => setNewIngredinet(e.target.value)}
                     onKeyDown={handleKeyDown}
                   />
 
                   <Button className="ml-2" onClick={handleAddIngredinet}>
-                    <Check className="h-4 w-4 opacity-100" />
+                    {isLoading ? (
+                      <Loader />
+                    ) : (
+                      <Check className="h-4 w-4 opacity-100" />
+                    )}
                   </Button>
-                </CommandItem>
-
+                </div>
+              </CommandEmpty>
+              <CommandGroup className="h-[150px] overflow-y-scroll">
                 {ingredients.map((ingredient) => (
                   <CommandItem
                     key={ingredient.id}
