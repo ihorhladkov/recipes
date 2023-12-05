@@ -76,21 +76,29 @@ export function Combobox({
     });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!newIngredient.trim()) {
-      return;
-    }
-
     if (event.key === "Enter") {
-      addIngredient({ name: newIngredient });
+      if (newIngredient.match("^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$") !== null) {
+        addIngredient({ name: newIngredient });
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid data, try again.",
+        });
+      }
     }
   };
 
-  const handleAddIngredinet = () => {
-    if (!newIngredient.trim()) {
-      return;
-    }
+  console.log(newIngredient.match("/^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$/g"))
 
-    addIngredient({ name: newIngredient });
+  const handleAddIngredinet = () => {
+    if (newIngredient.match("^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$") !== null) {
+      addIngredient({ name: newIngredient });
+    } else {
+      toast({
+        title: "Error",
+        description: "Invalid data, try again.",
+      });
+    }
   };
 
   const toggleIngredinet = (ingredientId: string) => {
