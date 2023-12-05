@@ -76,12 +76,20 @@ export function Combobox({
     });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!newIngredient.trim()) {
+      return;
+    }
+
     if (event.key === "Enter") {
       addIngredient({ name: newIngredient });
     }
   };
 
   const handleAddIngredinet = () => {
+    if (!newIngredient.trim()) {
+      return;
+    }
+
     addIngredient({ name: newIngredient });
   };
 
@@ -108,11 +116,10 @@ export function Combobox({
             <Command>
               <CommandInput placeholder="Search framework..." />
               <CommandEmpty>
-                <p className="mb-3">No ingredients found</p>
+                <p className="text-4 mb-4">No ingredients found</p>
                 <div className="mx-3 flex">
                   <Input
                     value={newIngredient}
-                    className=""
                     placeholder="Add new"
                     onChange={(e) => setNewIngredinet(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -145,7 +152,7 @@ export function Combobox({
                           : "opacity-0",
                       )}
                     />
-                    {ingredient.name}
+                    <span className="text-[16px]">{ingredient.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

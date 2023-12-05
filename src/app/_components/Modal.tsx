@@ -118,7 +118,7 @@ export function Modal() {
                     {...register("name", {
                       required: "This name is requierd.",
                       pattern: {
-                        value: /[A-Za-z]/,
+                        value: /^[a-z ,.'-]+$/i,
                         message: "Name must contain only English letters",
                       },
                       minLength: {
@@ -146,7 +146,7 @@ export function Modal() {
                     {...register("author", {
                       required: "This author name is requierd.",
                       pattern: {
-                        value: /[A-Za-z]/,
+                        value: /^[a-z ,.'-]+$/i,
                         message:
                           "Author name must contain only English letters",
                       },
@@ -175,7 +175,7 @@ export function Modal() {
                     {...register("short_description", {
                       required: "This short description is requierd.",
                       pattern: {
-                        value: /[A-Za-z]/,
+                        value: /^[a-z ,.'-]+$/i,
                         message:
                           "Description must contain only English letters.",
                       },
@@ -203,7 +203,7 @@ export function Modal() {
                     {...register("full_description", {
                       required: "This full description is requierd.",
                       pattern: {
-                        value: /[A-Za-z]/,
+                        value: /^[a-z ,.'-]+$/i,
                         message:
                           "Description must contain only English letters.",
                       },

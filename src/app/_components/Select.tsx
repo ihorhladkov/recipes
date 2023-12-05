@@ -22,7 +22,6 @@ export function SelectScrollable({
 }) {
   const {
     setValue,
-    getValues,
     register,
     formState: { errors },
   } = useFormContext();
