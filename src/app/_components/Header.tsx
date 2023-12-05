@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Modal } from "./Modal";
 import { Suspense } from "react";
 import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function Header() {
   return (
@@ -16,7 +17,7 @@ export default function Header() {
       <Suspense
         fallback={
           <Button variant="ghost" className="w-[111px] bg-white text-black">
-            Loading...
+            <Loader2 className="animate-spin" />
           </Button>
         }
       >

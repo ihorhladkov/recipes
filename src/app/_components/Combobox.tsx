@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,7 +24,6 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { Input } from "./ui/input";
 import { toast } from "./ui/use-toast";
-import Loader from "./Loader";
 
 interface Input {
   name: string;
@@ -37,6 +36,7 @@ export function Combobox({
 }) {
   const utils = api.useUtils();
   const [value, setValue] = React.useState("");
+  // const [searchValue, setSearchValue] = React.useState("");
   const [newIngredient, setNewIngredinet] = React.useState("");
 
   const {
@@ -75,30 +75,23 @@ export function Combobox({
       },
     });
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      if (newIngredient.match("^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$") !== null) {
-        addIngredient({ name: newIngredient });
-      } else {
-        toast({
+  const isValid = () => {
+    newIngredient.trim().match("^[a-zA-Z]+(?:[\\s'-][a-zA-Z]+)*$") !== null
+      ? addIngredient({ name: newIngredient })
+      : toast({
           title: "Error",
           description: "Invalid data, try again.",
         });
-      }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      isValid();
     }
   };
 
-  console.log(newIngredient.match("/^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$/g"))
-
   const handleAddIngredinet = () => {
-    if (newIngredient.match("^[a-zA-Z]+(?:[s'-][a-zA-Z]+)*$") !== null) {
-      addIngredient({ name: newIngredient });
-    } else {
-      toast({
-        title: "Error",
-        description: "Invalid data, try again.",
-      });
-    }
+    isValid();
   };
 
   const toggleIngredinet = (ingredientId: string) => {
@@ -122,7 +115,7 @@ export function Combobox({
         <SelectContent>
           <SelectGroup>
             <Command>
-              <CommandInput placeholder="Search framework..." />
+              <CommandInput placeholder="Search ingredient..." />
               <CommandEmpty>
                 <p className="text-4 mb-4">No ingredients found</p>
                 <div className="mx-3 flex">
@@ -135,7 +128,7 @@ export function Combobox({
 
                   <Button className="ml-2" onClick={handleAddIngredinet}>
                     {isLoading ? (
-                      <Loader />
+                      <Loader2 className=" h-4 w-4 animate-spin" />
                     ) : (
                       <Check className="h-4 w-4 opacity-100" />
                     )}
