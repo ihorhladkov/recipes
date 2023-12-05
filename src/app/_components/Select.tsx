@@ -36,7 +36,7 @@ export function SelectScrollable({
       >
         <SelectTrigger className="w-[230px]">
           <SelectValue
-            {...register("categoryId", { required: "This is required" })}
+            {...register("categoryId", { required: "Category is required." })}
             placeholder="Select a category"
           />
         </SelectTrigger>

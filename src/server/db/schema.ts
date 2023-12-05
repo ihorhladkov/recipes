@@ -15,11 +15,12 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 export const recipes = pgTable("recipes", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  description: text('description').notNull(),
-  shortDescription:  text('short_description').notNull(),
+  description: text("description").notNull(),
+  shortDescription: text("short_description").notNull(),
   author: text("author").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   categoryId: uuid("categoryId").references(() => categories.id),
+  slug: text("slug").unique(),
 });
 
 export const recipesRelations = relations(recipes, ({ one, many }) => ({

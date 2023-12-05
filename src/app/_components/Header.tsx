@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Modal } from "./Modal";
+import { Suspense } from "react";
+import { Button } from "./ui/button";
 
 export default function Header() {
   return (
@@ -11,7 +13,15 @@ export default function Header() {
       <li>
         <Link href={"/recipes"}>Recipes</Link>
       </li>
-      <Modal />
+      <Suspense
+        fallback={
+          <Button variant="ghost" className="w-[111px] bg-white text-black">
+            Loading...
+          </Button>
+        }
+      >
+        <Modal />
+      </Suspense>
     </header>
   );
 }

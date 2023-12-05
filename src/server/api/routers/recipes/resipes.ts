@@ -40,6 +40,7 @@ export const recipesRouter = createTRPCRouter({
         author: z.string(),
         ingredients: z.array(z.string()),
         categoryId: z.string(),
+        slug: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -58,7 +59,5 @@ export const recipesRouter = createTRPCRouter({
           }),
         ),
       );
-      // const addIngredients = ctx.db.insert(recipesToIngredients).values()
-      return newRecipe;
     }),
 });

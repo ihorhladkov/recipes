@@ -15,9 +15,11 @@ import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
 import { api } from "~/trpc/react";
 import { SelectScrollable } from "./Select";
-import { ComboboxDemo } from "./Combobox";
+import { Combobox } from "./Combobox";
 import { useState } from "react";
 import { ErrorMessage } from "@hookform/error-message";
+import { toast } from "./ui/use-toast";
+import { createSlug } from "../utils/slugGenerate";
 
 interface Inputs {
   name: string;
@@ -26,6 +28,7 @@ interface Inputs {
   full_description: string;
   categoryId: string;
   ingredients: string[];
+  slug: string;
 }
 
 const initialData = {
@@ -35,6 +38,7 @@ const initialData = {
   full_description: "",
   categoryId: "",
   ingredients: [],
+  slug: "",
 };
 
 export function Modal() {
@@ -48,11 +52,11 @@ export function Modal() {
       full_description: "",
       categoryId: "",
       ingredients: [],
+      slug: "",
     },
   });
 
-  const { data: categories } = api.categoriesRouter.getCategory.useQuery();
-
+  const [categories] = api.categoriesRouter.getCategory.useSuspenseQuery();
 
   const { mutate: createRecipe, isLoading } =
     api.recipesRouter.createNewRecipe.useMutation({
@@ -61,6 +65,10 @@ export function Modal() {
         utils.recipesRouter.getSortedRecipes.invalidate();
         reset(initialData);
         setOpen(false);
+        toast({
+          title: "Success",
+          description: "The recipe was successfully added",
+        });
       },
     });
 
@@ -68,20 +76,11 @@ export function Modal() {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors },
   } = methods;
 
-  const getIngredinetIds = getValues().ingredients.map(
-    (ingredinet) => ingredinet,
-  );
-
-  const { data: ingredients } =
-    api.ingredientsRouter.getAllIngredients.useQuery();
-  console.log(getIngredinetIds);
-  if (!categories || !ingredients) {
-    return <Button className="bg-white w-[111px] text-black">Loading...</Button>;
-  }
+  const [ingredients] =
+    api.ingredientsRouter.getAllIngredients.useSuspenseQuery();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     createRecipe({
@@ -89,8 +88,9 @@ export function Modal() {
       shortDescription: data.short_description,
       description: data.full_description,
       author: data.author,
-      ingredients: getIngredinetIds,
+      ingredients: data.ingredients,
       categoryId: data.categoryId,
+      slug: createSlug(data.name),
     });
   };
 
@@ -99,7 +99,6 @@ export function Modal() {
       open={open}
       onOpenChange={() => {
         setOpen((prev) => !prev);
-        reset(initialData);
       }}
     >
       <DialogTrigger asChild>
@@ -118,6 +117,14 @@ export function Modal() {
                   <Input
                     {...register("name", {
                       required: "This name is requierd.",
+                      pattern: {
+                        value: /[A-Za-z]/,
+                        message: "Name must contain only English letters",
+                      },
+                      minLength: {
+                        value: 3,
+                        message: "Must have at list 3 letters",
+                      },
                     })}
                     id="name"
                     placeholder="Enter title of your recipe"
@@ -138,8 +145,17 @@ export function Modal() {
                   <Input
                     {...register("author", {
                       required: "This author name is requierd.",
+                      pattern: {
+                        value: /[A-Za-z]/,
+                        message:
+                          "Author name must contain only English letters",
+                      },
+                      minLength: {
+                        value: 3,
+                        message: "Must have at list 3 letters",
+                      },
                     })}
-                    id="name"
+                    id="author"
                     placeholder="What is your name?"
                     className="col-span-3"
                   />
@@ -158,8 +174,17 @@ export function Modal() {
                   <Textarea
                     {...register("short_description", {
                       required: "This short description is requierd.",
+                      pattern: {
+                        value: /[A-Za-z]/,
+                        message:
+                          "Description must contain only English letters.",
+                      },
+                      minLength: {
+                        value: 10,
+                        message: "Must have at list 20 letters.",
+                      },
                     })}
-                    className="col-span-3"
+                    className="col-span-3 resize-none"
                     placeholder="Write short description of your recipe"
                   />
 
@@ -177,8 +202,17 @@ export function Modal() {
                   <Textarea
                     {...register("full_description", {
                       required: "This full description is requierd.",
+                      pattern: {
+                        value: /[A-Za-z]/,
+                        message:
+                          "Description must contain only English letters.",
+                      },
+                      minLength: {
+                        value: 10,
+                        message: "Must have at list 20 letters.",
+                      },
                     })}
-                    className="col-span-3"
+                    className="col-span-3 resize-none"
                     placeholder="Write full description of your recipe"
                   />
 
@@ -194,7 +228,7 @@ export function Modal() {
                 <div className="col-span-3">
                   <Label htmlFor="name">Ingredients</Label>
                   <div className="col-span-3">
-                    <ComboboxDemo ingredients={ingredients} />
+                    <Combobox ingredients={ingredients} />
                   </div>
                 </div>
 
@@ -207,7 +241,11 @@ export function Modal() {
 
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => reset(initialData)}
+                >
                   Close
                 </Button>
               </DialogClose>

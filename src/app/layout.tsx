@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { Button } from "./_components/ui/button";
 import Header from "./_components/Header";
+import { Toaster } from "./_components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,6 +31,7 @@ export default function RootLayout({
             <Header />
           {children}
           </main>
+          <Toaster />
         </TRPCReactProvider>
       </body>
     </html>
