@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Input } from "../_components/ui/input";
-import { useSearchStore } from "~/store/serchStore";
+import { useSearchStore } from "~/store/searchStore";
 
 export const RecipeSearch = () => {
   const searchString = useSearchStore((state) => state.searchString);
