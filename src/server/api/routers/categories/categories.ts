@@ -1,9 +1,8 @@
-import { categories } from "~/server/db/schema";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 
 export const categoriesRouter = createTRPCRouter({
-  getCategory: publicProcedure.query(({ ctx }) => {
-    const data = ctx.db.query.recipes.findMany()
+  getCategory: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.db.query.categories.findMany()
     return data
   }),
 });

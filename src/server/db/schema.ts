@@ -4,7 +4,7 @@ import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 
 export const categories = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
+  name: text("name").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -15,11 +15,12 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 export const recipes = pgTable("recipes", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  description: text('description').notNull(),
-  shortDescription:  text('short_description').notNull(),
+  description: text("description").notNull(),
+  shortDescription: text("short_description").notNull(),
   author: text("author").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   categoryId: uuid("categoryId").references(() => categories.id),
+  slug: text("slug").unique(),
 });
 
 export const recipesRelations = relations(recipes, ({ one, many }) => ({
@@ -32,7 +33,7 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
 
 export const ingredients = pgTable("ingredients", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
+  name: text("name").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
