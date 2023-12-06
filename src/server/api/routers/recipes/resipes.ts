@@ -7,58 +7,54 @@ export const recipesRouter = createTRPCRouter({
   getAllRecipes: publicProcedure
     .input(z.object({ search: z.string(), sortBy: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      if (input.sortBy) {
-        switch (input.sortBy) {
-          case "createdAt":
-            return ctx.db.query.recipes.findMany({
-              orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
-              with: {
-                recipesToIngredients: {
-                  with: {
-                    ingredient: true,
-                  },
-                },
-              },
-              where: or(
-                ilike(recipes.name, `%${input.search}%`),
-                ilike(recipes.shortDescription, `%${input.search}%`),
-              ),
-            });
-
-          case "name":
-            return ctx.db.query.recipes.findMany({
-              orderBy: (recipes, { desc }) => [desc(recipes.name)],
-              with: {
-                recipesToIngredients: {
-                  with: {
-                    ingredient: true,
-                  },
-                },
-              },
-              where: or(
-                ilike(recipes.name, `%${input.search}%`),
-                ilike(recipes.shortDescription, `%${input.search}%`),
-              ),
-            });
-
-          default:
-            null;
-        }
-      }
-
-      return ctx.db.query.recipes.findMany({
-        with: {
-          recipesToIngredients: {
+      switch (input.sortBy) {
+        case "createdAt":
+          return ctx.db.query.recipes.findMany({
+            orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
             with: {
-              ingredient: true,
+              recipesToIngredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
             },
-          },
-        },
-        where: or(
-          ilike(recipes.name, `%${input.search}%`),
-          ilike(recipes.shortDescription, `%${input.search}%`),
-        ),
-      });
+            where: or(
+              ilike(recipes.name, `%${input.search}%`),
+              ilike(recipes.shortDescription, `%${input.search}%`),
+            ),
+          });
+
+        case "name":
+          return ctx.db.query.recipes.findMany({
+            orderBy: (recipes, { desc }) => [desc(recipes.name)],
+            with: {
+              recipesToIngredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
+            },
+            where: or(
+              ilike(recipes.name, `%${input.search}%`),
+              ilike(recipes.shortDescription, `%${input.search}%`),
+            ),
+          });
+
+        default:
+          return ctx.db.query.recipes.findMany({
+            with: {
+              recipesToIngredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
+            },
+            where: or(
+              ilike(recipes.name, `%${input.search}%`),
+              ilike(recipes.shortDescription, `%${input.search}%`),
+            ),
+          });
+      }
     }),
 
   getSortedRecipes: publicProcedure.query(async ({ ctx }) => {
