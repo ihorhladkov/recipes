@@ -5,9 +5,48 @@ import { z } from "zod";
 
 export const recipesRouter = createTRPCRouter({
   getAllRecipes: publicProcedure
-    .input(z.object({ search: z.string() }))
+    .input(z.object({ search: z.string(), sortBy: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const data = ctx.db.query.recipes.findMany({
+      if (input.sortBy) {
+        switch (input.sortBy) {
+          case "createdAt":
+            return ctx.db.query.recipes.findMany({
+              orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
+              with: {
+                recipesToIngredients: {
+                  with: {
+                    ingredient: true,
+                  },
+                },
+              },
+              where: or(
+                ilike(recipes.name, `%${input.search}%`),
+                ilike(recipes.shortDescription, `%${input.search}%`),
+              ),
+            });
+
+          case "name":
+            return ctx.db.query.recipes.findMany({
+              orderBy: (recipes, { desc }) => [desc(recipes.name)],
+              with: {
+                recipesToIngredients: {
+                  with: {
+                    ingredient: true,
+                  },
+                },
+              },
+              where: or(
+                ilike(recipes.name, `%${input.search}%`),
+                ilike(recipes.shortDescription, `%${input.search}%`),
+              ),
+            });
+
+          default:
+            null;
+        }
+      }
+
+      return ctx.db.query.recipes.findMany({
         with: {
           recipesToIngredients: {
             with: {
@@ -20,8 +59,6 @@ export const recipesRouter = createTRPCRouter({
           ilike(recipes.shortDescription, `%${input.search}%`),
         ),
       });
-
-      return data
     }),
 
   getSortedRecipes: publicProcedure.query(async ({ ctx }) => {

@@ -1,11 +1,10 @@
 
 import React from "react";
 import { Button } from "./ui/button";
-import { useSearchStore } from "~/store/serchStore";
+import { useSearchStore } from "~/store/searchStore";
 
 export default function NoResult() {
   const findNew = useSearchStore((state) => state.findNew);
-  const searchString = useSearchStore((state) => state.searchString);
 
   return (
     <h2 className="col-span-2 mx-auto mt-20 block w-full text-center text-2xl uppercase">
