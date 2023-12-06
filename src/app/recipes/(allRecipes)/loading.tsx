@@ -1,5 +1,5 @@
 import React from "react";
-import { CardSkeleton } from "../_components/CardSkeleton";
+import { CardSkeleton } from "../../_components/CardSkeleton";
 
 export default function loading() {
   return (
