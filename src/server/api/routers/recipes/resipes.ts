@@ -1,6 +1,6 @@
 import { ilike, or } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
-import { recipes } from "~/server/db/schema";
+import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
 
 export const recipesRouter = createTRPCRouter({
