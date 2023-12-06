@@ -13,8 +13,6 @@ export function RecipeCard({ slug }: { slug: string }) {
     slug,
   });
 
-//   if (isError) return <>Not Found</>;
-
   return (
     <Card className="mx-auto w-full max-w-[320px]">
       <CardHeader className="pb-3">
