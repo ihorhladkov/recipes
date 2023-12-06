@@ -1,4 +1,4 @@
-import { ilike, or } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
@@ -72,6 +72,7 @@ export const recipesRouter = createTRPCRouter({
 
     return data;
   }),
+
   createNewRecipe: publicProcedure
     .input(
       z.object({
@@ -100,5 +101,24 @@ export const recipesRouter = createTRPCRouter({
           }),
         ),
       );
+    }),
+
+  getOneRecipe: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.db.query.recipes.findFirst({
+        where: eq(recipes.slug, input.slug),
+
+        with: {
+          recipesToIngredients: {
+            with: {
+              ingredient: true,
+            },
+          },
+          category: true
+        },
+      });
+
+      return data;
     }),
 });

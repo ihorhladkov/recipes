@@ -1,11 +1,12 @@
 "use client";
 
 import { useGetRecipes } from "~/hooks/useGetRecipes";
-import Card from "../_components/Card";
-import NoResult from "../_components/NoResult";
+import Card from "../../_components/Card";
+import NoResult from "../../_components/NoResult";
 
 export default function RecipesPage() {
   const [allRecipes] = useGetRecipes();
+
   return (
     <>
       <section className="flex flex-col items-center justify-center text-white">
