@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { Modal } from "./Modal";
+import { Suspense } from "react";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function Header() {
   return (
@@ -11,7 +14,15 @@ export default function Header() {
       <li>
         <Link href={"/recipes"}>Recipes</Link>
       </li>
-      <Modal />
+      <Suspense
+        fallback={
+          <Button variant="ghost" className="w-[111px] bg-white text-black">
+            <Loader2 className="animate-spin" />
+          </Button>
+        }
+      >
+        <Modal />
+      </Suspense>
     </header>
   );
 }

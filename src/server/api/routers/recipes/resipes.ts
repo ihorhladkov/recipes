@@ -27,7 +27,7 @@ export const recipesRouter = createTRPCRouter({
   getSortedRecipes: publicProcedure.query(async ({ ctx }) => {
     const data = await ctx.db.query.recipes.findMany({
       limit: 5,
-      orderBy: (recipes, { asc }) => [asc(recipes.createdAt)],
+      orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
       with: {
         recipesToIngredients: {
           with: {
@@ -39,4 +39,33 @@ export const recipesRouter = createTRPCRouter({
 
     return data;
   }),
+  createNewRecipe: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        shortDescription: z.string(),
+        description: z.string(),
+        author: z.string(),
+        ingredients: z.array(z.string()),
+        categoryId: z.string(),
+        slug: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { ingredients, ...rest } = input;
+      const [newRecipe] = await ctx.db.insert(recipes).values(rest).returning();
+
+      if (!newRecipe) {
+        return;
+      }
+
+      Promise.all(
+        ingredients.map((ingredient) =>
+          ctx.db.insert(recipesToIngredients).values({
+            ingredientId: ingredient,
+            recipeId: newRecipe?.id,
+          }),
+        ),
+      );
+    }),
 });
