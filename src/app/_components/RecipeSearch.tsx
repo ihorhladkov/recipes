@@ -5,11 +5,12 @@ import { Input } from "../_components/ui/input";
 import { useSearchStore } from "~/store/searchStore";
 
 export const RecipeSearch = () => {
-  const searchString = useSearchStore((state) => state.searchString);
+  const { searchString, handleSetPage } = useSearchStore((state) => state);
   const findNew = useSearchStore((state) => state.findNew);
 
   const handeQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     findNew(event.target.value);
+    handleSetPage(1)
   };
 
   return (

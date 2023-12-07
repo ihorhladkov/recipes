@@ -17,7 +17,7 @@ export function SortSelect() {
   const setSortType = useSearchStore((state) => state.setSortBy);
 
   return (
-    <Select onValueChange={(value) => setSortType(value)}>
+    <Select defaultValue='createdAt' onValueChange={(value) => setSortType(value)}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select type of sort" />
       </SelectTrigger>
