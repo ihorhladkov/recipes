@@ -8,7 +8,7 @@ export const recipesRouter = createTRPCRouter({
     .input(
       z.object({
         search: z.string(),
-        sortBy: z.string().optional(),
+        sortBy: z.string(),
         elements: z.number(),
         page: z.number(),
       }),
@@ -26,13 +26,11 @@ export const recipesRouter = createTRPCRouter({
 
       const count = countResult[0]?.count || 0;
 
-      const dat = input.sortBy ?? 'author'
-
       const data = await ctx.db.query.recipes.findMany({
         limit: input.elements,
         offset: (input.page - 1) * input.elements,
         orderBy: (recipes, { desc }) => [
-          desc(recipes[dat]),
+          desc(recipes[input.sortBy as keyof typeof recipes]),
         ],
         with: {
           recipesToIngredients: {
