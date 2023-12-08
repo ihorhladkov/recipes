@@ -1,60 +1,58 @@
-import { eq, ilike, or } from "drizzle-orm";
+import { eq, ilike, or, sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
+import { SortSchema } from "~/store/searchStore";
 
 export const recipesRouter = createTRPCRouter({
   getAllRecipes: publicProcedure
-    .input(z.object({ search: z.string(), sortBy: z.string().optional() }))
+    .input(
+      z.object({
+        search: z.string(),
+        sortBy: SortSchema,
+        elements: z.number(),
+        page: z.number(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      switch (input.sortBy) {
-        case "createdAt":
-          return ctx.db.query.recipes.findMany({
-            orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
-            with: {
-              recipesToIngredients: {
-                with: {
-                  ingredient: true,
-                },
-              },
-            },
-            where: or(
-              ilike(recipes.name, `%${input.search}%`),
-              ilike(recipes.shortDescription, `%${input.search}%`),
-            ),
-          });
+      const countResult = await ctx.db
+        .select({ count: sql<number>`count(*)` })
+        .from(recipes)
+        .where(
+          or(
+            ilike(recipes.name, `%${input.search}%`),
+            ilike(recipes.shortDescription, `%${input.search}%`),
+          ),
+        );
 
-        case "name":
-          return ctx.db.query.recipes.findMany({
-            orderBy: (recipes, { desc }) => [desc(recipes.name)],
-            with: {
-              recipesToIngredients: {
-                with: {
-                  ingredient: true,
-                },
-              },
-            },
-            where: or(
-              ilike(recipes.name, `%${input.search}%`),
-              ilike(recipes.shortDescription, `%${input.search}%`),
-            ),
-          });
+      const count = countResult[0]?.count || 0;
 
-        default:
-          return ctx.db.query.recipes.findMany({
+      const data = await ctx.db.query.recipes.findMany({
+        limit: input.elements,
+        offset: (input.page - 1) * input.elements,
+        orderBy: (recipes, { desc }) => [
+          desc(recipes[input.sortBy]),
+        ],
+        with: {
+          recipesToIngredients: {
             with: {
-              recipesToIngredients: {
-                with: {
-                  ingredient: true,
-                },
-              },
+              ingredient: true,
             },
-            where: or(
-              ilike(recipes.name, `%${input.search}%`),
-              ilike(recipes.shortDescription, `%${input.search}%`),
-            ),
-          });
-      }
+          },
+        },
+        where: or(
+          ilike(recipes.name, `%${input.search}%`),
+          ilike(recipes.shortDescription, `%${input.search}%`),
+        ),
+      });
+
+      const totalPage = Math.ceil(count / input.elements);
+
+      return {
+        data,
+        count,
+        totalPage,
+      };
     }),
 
   getSortedRecipes: publicProcedure.query(async ({ ctx }) => {
@@ -115,7 +113,7 @@ export const recipesRouter = createTRPCRouter({
               ingredient: true,
             },
           },
-          category: true
+          category: true,
         },
       });
 
