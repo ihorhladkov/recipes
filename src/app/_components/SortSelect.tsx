@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { SortBy, SortSchema, useSearchStore } from "~/store/searchStore";
+import { SortBy, useSearchStore } from "~/store/searchStore";
 
 export function SortSelect() {
   const setSortType = useSearchStore((state) => state.setSortBy);
