@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { SortBy, useSearchStore } from "~/store/searchStore";
+import { SortBy, SortSchema, useSearchStore } from "~/store/searchStore";
 
 export function SortSelect() {
   const setSortType = useSearchStore((state) => state.setSortBy);
@@ -19,7 +19,7 @@ export function SortSelect() {
   return (
     <Select
       defaultValue="createdAt"
-      onValueChange={(value: SortBy) => setSortType(value)}
+      onValueChange={(value: SortBy) => setSortType(SortSchema.parse(value))}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select type of sort" />
