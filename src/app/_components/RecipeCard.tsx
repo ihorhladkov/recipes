@@ -14,7 +14,7 @@ export function RecipeCard({ slug }: { slug: string }) {
   });
 
   return (
-    <Card className="mx-auto w-full max-w-[320px]">
+    <Card className="mx-auto w-full max-w-[450px]">
       <CardHeader className="pb-3">
         <CardTitle>{recipe?.name}</CardTitle>
         <CardDescription>{recipe?.shortDescription}</CardDescription>

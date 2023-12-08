@@ -2,13 +2,14 @@ import { eq, ilike, or, sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
+import { SortSchema } from "~/store/searchStore";
 
 export const recipesRouter = createTRPCRouter({
   getAllRecipes: publicProcedure
     .input(
       z.object({
         search: z.string(),
-        sortBy: z.string(),
+        sortBy: SortSchema,
         elements: z.number(),
         page: z.number(),
       }),
@@ -30,7 +31,7 @@ export const recipesRouter = createTRPCRouter({
         limit: input.elements,
         offset: (input.page - 1) * input.elements,
         orderBy: (recipes, { desc }) => [
-          desc(recipes[input.sortBy as keyof typeof recipes]),
+          desc(recipes[input.sortBy]),
         ],
         with: {
           recipesToIngredients: {

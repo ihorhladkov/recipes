@@ -3,8 +3,9 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { useSearchStore } from "~/store/searchStore";
 
 export const useGetRecipes = () => {
-  const { searchString, sortBy, elements, page } =
-    useSearchStore((state) => state);
+  const { searchString, sortBy, elements, page } = useSearchStore(
+    (state) => state,
+  );
 
   const debouncedSearchTerm = useDebounce(searchString, 500);
   return api.recipesRouter.getAllRecipes.useSuspenseQuery(
@@ -14,8 +15,8 @@ export const useGetRecipes = () => {
       elements,
       page,
     },
-    // {
-    //   keepPreviousData: true,
-    // },
+    {
+      keepPreviousData: true,
+    },
   );
 };
