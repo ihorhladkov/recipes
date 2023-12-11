@@ -18,15 +18,15 @@ export default function CardDemo({
     <Link href={`/recipes/${recipe.slug}`}>
       <Card className="flex h-[250px] w-full flex-col">
         <CardHeader>
-          <CardTitle className="h-10 w-full max-w-[320px] overflow-y-scroll">{recipe.name}</CardTitle>
-          <CardDescription>{recipe.shortDescription}</CardDescription>
+          <CardTitle className="max-w-[320px] break-all">{recipe.name}</CardTitle>
+          <CardDescription className="break-all">{recipe.shortDescription}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col justify-between gap-4">
           <div>
             <p className="mb-6 text-sm font-medium uppercase leading-none">
               Ingredients
             </p>
-            <div className="h-[80px] overflow-y-scroll">
+            <div className="h-[60px] overflow-hidden overflow-y-scroll">
               {recipe.recipesToIngredients.map((ingedient) => (
                 <div
                   key={ingedient.id}

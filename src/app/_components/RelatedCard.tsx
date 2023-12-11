@@ -22,10 +22,10 @@ export default function RelatedCard({
       <Card className="flex h-[250px] w-full flex-col">
         <CardHeader>
           <div>
-            <CardTitle className="h-10 w-full max-w-[320px] overflow-y-scroll">
+            <CardTitle className="w-full max-w-[320px] break-all">
               {recipe.name}
             </CardTitle>
-            <CardDescription>{recipe.shortDescription}</CardDescription>
+            <CardDescription className="break-all">{recipe.shortDescription}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col justify-between gap-4">
@@ -33,7 +33,7 @@ export default function RelatedCard({
             <p className="mb-6 text-sm font-medium uppercase leading-none">
               Author name
             </p>
-            <p>{recipe.author}</p>
+            <p className="break-all">{recipe.author}</p>
           </div>
         </CardContent>
       </Card>

@@ -18,16 +18,16 @@ export function RecipeCard({ slug }: { slug: string }) {
     <>
       <Card className="mx-auto w-full max-w-[320px] sm:max-w-[450px]">
         <CardHeader className="pb-3">
-          <CardTitle className="h-10 sm:h-14 w-full overflow-y-scroll">
-            {recipe?.data?.name}
-          </CardTitle>
-          <CardDescription>{recipe?.data?.shortDescription}</CardDescription>
+          <CardTitle className="break-all">{recipe?.data?.name}</CardTitle>
+          <CardDescription className="break-all">
+            {recipe?.data?.shortDescription}
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-1">
           <div className="mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 transition-all">
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">Description</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="break-all text-sm text-muted-foreground">
                 {recipe?.data?.description}
               </p>
             </div>
