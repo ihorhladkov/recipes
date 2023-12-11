@@ -76,6 +76,7 @@ export function Modal() {
     register,
     handleSubmit,
     reset,
+    clearErrors,
     formState: { errors },
   } = methods;
 
@@ -99,12 +100,13 @@ export function Modal() {
       open={open}
       onOpenChange={() => {
         setOpen((prev) => !prev);
+        clearErrors()
       }}
     >
       <DialogTrigger asChild>
         <Button variant="outline">Create New</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[650px] overflow-y-scroll">
         <DialogHeader>
           <DialogTitle>Create New Recipe</DialogTitle>
         </DialogHeader>

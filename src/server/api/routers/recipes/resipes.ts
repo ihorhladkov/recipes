@@ -1,8 +1,9 @@
-import { eq, ilike, or, sql } from "drizzle-orm";
+import { and, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
 import { SortSchema } from "~/store/searchStore";
+import { TRPCError } from "@trpc/server";
 
 export const recipesRouter = createTRPCRouter({
   getAllRecipes: publicProcedure
@@ -26,13 +27,12 @@ export const recipesRouter = createTRPCRouter({
         );
 
       const count = countResult[0]?.count || 0;
+      const offset = (input.page - 1) * input.elements;
 
       const data = await ctx.db.query.recipes.findMany({
         limit: input.elements,
-        offset: (input.page - 1) * input.elements,
-        orderBy: (recipes, { desc }) => [
-          desc(recipes[input.sortBy]),
-        ],
+        offset,
+        orderBy: (recipes, { desc }) => [desc(recipes[input.sortBy])],
         with: {
           recipesToIngredients: {
             with: {
@@ -52,6 +52,7 @@ export const recipesRouter = createTRPCRouter({
         data,
         count,
         totalPage,
+        offset,
       };
     }),
 
@@ -88,7 +89,10 @@ export const recipesRouter = createTRPCRouter({
       const [newRecipe] = await ctx.db.insert(recipes).values(rest).returning();
 
       if (!newRecipe) {
-        return;
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "An unexpected error occurred, please try again later.",
+        });
       }
 
       Promise.all(
@@ -106,7 +110,6 @@ export const recipesRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const data = await ctx.db.query.recipes.findFirst({
         where: eq(recipes.slug, input.slug),
-
         with: {
           recipesToIngredients: {
             with: {
@@ -117,6 +120,48 @@ export const recipesRouter = createTRPCRouter({
         },
       });
 
-      return data;
+      if (!data) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "An unexpected error occurred, please try again later.",
+        });
+      }
+
+      const dataId = data.id;
+
+      const ingredinetIds = data?.recipesToIngredients.map(
+        (ingredinet) => ingredinet.ingredient.id,
+      );
+
+      if (!ingredinetIds) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "An unexpected error occurred, please try again later.",
+        });
+      }
+
+      const query = await ctx.db
+        .select({
+          id: recipes.id,
+          name: recipes.name,
+          shortDescription: recipes.shortDescription,
+          slug: recipes.slug,
+          author: recipes.author,
+        })
+        .from(recipes)
+        .leftJoin(
+          recipesToIngredients,
+          eq(recipesToIngredients.recipeId, recipes.id),
+        )
+        .where(
+          and(
+            ne(recipes.id, dataId),
+            inArray(recipesToIngredients.ingredientId, [...ingredinetIds]),
+          ),
+        )
+        .groupBy(recipes.id)
+        .limit(3);
+
+      return { data, query };
     }),
 });

@@ -7,10 +7,9 @@ export const useGetRecipes = () => {
     (state) => state,
   );
 
-  const debouncedSearchTerm = useDebounce(searchString, 500);
   return api.recipesRouter.getAllRecipes.useSuspenseQuery(
     {
-      search: debouncedSearchTerm.trim(),
+      search: searchString,
       sortBy,
       elements,
       page,

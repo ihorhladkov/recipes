@@ -18,9 +18,9 @@ export const recipes = pgTable("recipes", {
   description: text("description").notNull(),
   shortDescription: text("short_description").notNull(),
   author: text("author").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  categoryId: uuid("categoryId").references(() => categories.id),
-  slug: text("slug").unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  categoryId: uuid("categoryId").references(() => categories.id).notNull(),
+  slug: text("slug").unique().notNull(),
 });
 
 export const recipesRelations = relations(recipes, ({ one, many }) => ({

@@ -36,7 +36,6 @@ export function Combobox({
 }) {
   const utils = api.useUtils();
   const [value, setValue] = React.useState("");
-  // const [searchValue, setSearchValue] = React.useState("");
   const [newIngredient, setNewIngredinet] = React.useState("");
 
   const {
