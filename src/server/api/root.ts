@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 // import { publicProcedure } from "./trpc";
 import { categoriesRouter } from "../api/routers/categories/categories";
-import { recipesRouter } from "../api/routers/recipes/resipes";
+import { recipesRouter } from "./routers/recipes/recipes";
 import { ingredientsRouter } from "../api/routers/ingredients/ingrediets";
 import { inferRouterOutputs } from "@trpc/server";
 

@@ -24,6 +24,8 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { Input } from "./ui/input";
 import { toast } from "./ui/use-toast";
+import { validation } from "../utils/formValidation";
+import { useAddIngredinet } from "~/hooks/useAddIngredient";
 
 interface Input {
   name: string;
@@ -47,32 +49,12 @@ export function Combobox({
   const { append, remove } = useFieldArray({
     control,
     name: "ingredients",
-    rules: {
-      required: "Ingredients are required.",
-      minLength: {
-        value: 3,
-        message: "Must contain at list 3 items.",
-      },
-    },
+    rules: validation.comboboxValidation,
   });
 
-  const { mutate: addIngredient, isLoading } =
-    api.ingredientsRouter.addNewIngredient.useMutation({
-      onSuccess() {
-        utils.ingredientsRouter.getAllIngredients.invalidate();
-        toast({
-          title: "Success",
-          description: "The ingredinet was successfully added.",
-        });
-        setNewIngredinet("");
-      },
-      onError() {
-        toast({
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
-      },
-    });
+  const { mutate: addIngredient, isLoading } = useAddIngredinet({
+    setNewIngredinet: () => setNewIngredinet(""),
+  });
 
   const isValid = () => {
     newIngredient.trim().match("^[a-zA-Z]+(?:[\\s'-][a-zA-Z]+)*$") !== null

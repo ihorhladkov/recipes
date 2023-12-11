@@ -18,8 +18,10 @@ import { SelectScrollable } from "./Select";
 import { Combobox } from "./Combobox";
 import { useState } from "react";
 import { ErrorMessage } from "@hookform/error-message";
-import { toast } from "./ui/use-toast";
 import { createSlug } from "../utils/slugGenerate";
+import { useCreateRecipe } from "~/hooks/useCreateRecipe";
+import { validation } from "../utils/formValidation";
+import { initialData } from "../utils/initialData";
 
 interface Inputs {
   name: string;
@@ -31,46 +33,13 @@ interface Inputs {
   slug: string;
 }
 
-const initialData = {
-  name: "",
-  author: "",
-  short_description: "",
-  full_description: "",
-  categoryId: "",
-  ingredients: [],
-  slug: "",
-};
-
 export function Modal() {
   const [open, setOpen] = useState(false);
-  const utils = api.useUtils();
   const methods = useForm<Inputs>({
-    defaultValues: {
-      name: "",
-      author: "",
-      short_description: "",
-      full_description: "",
-      categoryId: "",
-      ingredients: [],
-      slug: "",
-    },
+    defaultValues: { ...initialData },
   });
 
   const [categories] = api.categoriesRouter.getCategory.useSuspenseQuery();
-
-  const { mutate: createRecipe, isLoading } =
-    api.recipesRouter.createNewRecipe.useMutation({
-      onSuccess() {
-        utils.recipesRouter.getAllRecipes.invalidate();
-        utils.recipesRouter.getSortedRecipes.invalidate();
-        reset(initialData);
-        setOpen(false);
-        toast({
-          title: "Success",
-          description: "The recipe was successfully added",
-        });
-      },
-    });
 
   const {
     register,
@@ -79,6 +48,11 @@ export function Modal() {
     clearErrors,
     formState: { errors },
   } = methods;
+
+  const { mutate: createRecipe, isLoading } = useCreateRecipe({
+    reset: () => reset(initialData),
+    setOpen: () => setOpen(false),
+  });
 
   const [ingredients] =
     api.ingredientsRouter.getAllIngredients.useSuspenseQuery();
@@ -99,14 +73,14 @@ export function Modal() {
     <Dialog
       open={open}
       onOpenChange={() => {
-        setOpen((prev) => !prev);
-        clearErrors()
+        setOpen((prevState) => !prevState);
+        clearErrors();
       }}
     >
       <DialogTrigger asChild>
         <Button variant="outline">Create New</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[650px] overflow-y-scroll">
+      <DialogContent className="max-h-[650px] overflow-y-scroll sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Recipe</DialogTitle>
         </DialogHeader>
@@ -117,17 +91,7 @@ export function Modal() {
                 <div className="col-span-3">
                   <Label htmlFor="name">Recipe Name</Label>
                   <Input
-                    {...register("name", {
-                      required: "This name is requierd.",
-                      pattern: {
-                        value: /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)*$/g,
-                        message: "Name must contain only English letters",
-                      },
-                      minLength: {
-                        value: 3,
-                        message: "Must have at list 3 letters",
-                      },
-                    })}
+                    {...register("name", validation.nameValidation)}
                     id="name"
                     placeholder="Enter title of your recipe"
                     className="col-span-3"
@@ -145,18 +109,7 @@ export function Modal() {
                 <div className="col-span-3">
                   <Label htmlFor="author">Author Name</Label>
                   <Input
-                    {...register("author", {
-                      required: "This author name is requierd.",
-                      pattern: {
-                        value: /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)*$/g,
-                        message:
-                          "Author name must contain only English letters",
-                      },
-                      minLength: {
-                        value: 3,
-                        message: "Must have at list 3 letters",
-                      },
-                    })}
+                    {...register("author", validation.authorNameValidation)}
                     id="author"
                     placeholder="What is your name?"
                     className="col-span-3"
@@ -174,18 +127,10 @@ export function Modal() {
                 <div className="col-span-3">
                   <Label htmlFor="short_description">Short description</Label>
                   <Textarea
-                    {...register("short_description", {
-                      required: "This short description is requierd.",
-                      pattern: {
-                        value: /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)*$/g,
-                        message:
-                          "Description must contain only English letters.",
-                      },
-                      minLength: {
-                        value: 10,
-                        message: "Must have at list 20 letters.",
-                      },
-                    })}
+                    {...register(
+                      "short_description",
+                      validation.shortDescriptionValidation,
+                    )}
                     className="col-span-3 resize-none"
                     placeholder="Write short description of your recipe"
                   />
@@ -202,18 +147,10 @@ export function Modal() {
                 <div className="col-span-3">
                   <Label htmlFor="name">Full description</Label>
                   <Textarea
-                    {...register("full_description", {
-                      required: "This full description is requierd.",
-                      pattern: {
-                        value: /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)*$/g,
-                        message:
-                          "Description must contain only English letters.",
-                      },
-                      minLength: {
-                        value: 10,
-                        message: "Must have at list 20 letters.",
-                      },
-                    })}
+                    {...register(
+                      "full_description",
+                      validation.fullDescriptionValidation,
+                    )}
                     className="col-span-3 resize-none"
                     placeholder="Write full description of your recipe"
                   />
