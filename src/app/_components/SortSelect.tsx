@@ -18,7 +18,7 @@ export function SortSelect() {
 
   return (
     <Select
-      defaultValue="createdAt"
+      defaultValue="author"
       onValueChange={(value: SortBy) => setSortType(SortSchema.parse(value))}
     >
       <SelectTrigger className="w-[180px]">

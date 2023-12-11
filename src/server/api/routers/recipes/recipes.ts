@@ -56,21 +56,21 @@ export const recipesRouter = createTRPCRouter({
       };
     }),
 
-  getSortedRecipes: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.db.query.recipes.findMany({
-      limit: 5,
-      orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
-      with: {
-        recipesToIngredients: {
-          with: {
-            ingredient: true,
-          },
-        },
-      },
-    });
+  // getSortedRecipes: publicProcedure.query(async ({ ctx }) => {
+  //   const data = await ctx.db.query.recipes.findMany({
+  //     limit: 5,
+  //     orderBy: (recipes, { desc }) => [desc(recipes.createdAt)],
+  //     with: {
+  //       recipesToIngredients: {
+  //         with: {
+  //           ingredient: true,
+  //         },
+  //       },
+  //     },
+  //   });
 
-    return data;
-  }),
+  //   return data;
+  // }),
 
   createNewRecipe: publicProcedure
     .input(

@@ -13,7 +13,7 @@ export default function NoResult() {
         className="text-blue-800 underline uppercase hover:text-red-400"
         onClick={() => findNew('')}
       >
-        reload page
+        Clear search input
       </Button>
     </h2>
   );

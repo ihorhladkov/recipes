@@ -16,11 +16,11 @@ export function RecipeCard({ slug }: { slug: string }) {
 
   return (
     <>
-      <Card className="mx-auto w-full max-w-[320px] sm:max-w-[450px]">
+      <Card className="mx-auto w-full max-w-[320px] sm:max-w-[286px]">
         <CardHeader className="pb-3">
-          <CardTitle className="break-all">{recipe?.data?.name}</CardTitle>
+          <CardTitle className="break-all">{recipe.data.name}</CardTitle>
           <CardDescription className="break-all">
-            {recipe?.data?.shortDescription}
+            {recipe.data.shortDescription}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-1">
@@ -28,7 +28,7 @@ export function RecipeCard({ slug }: { slug: string }) {
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">Description</p>
               <p className="break-all text-sm text-muted-foreground">
-                {recipe?.data?.description}
+                {recipe.data.description}
               </p>
             </div>
           </div>
@@ -36,7 +36,7 @@ export function RecipeCard({ slug }: { slug: string }) {
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">Category</p>
               <p className="text-sm text-muted-foreground">
-                {recipe?.data?.category?.name}
+                {recipe.data.category.name}
               </p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export function RecipeCard({ slug }: { slug: string }) {
                 Ingredients
               </p>
               <div className="h-[80px] overflow-y-scroll">
-                {recipe?.data?.recipesToIngredients.map((ingedient) => (
+                {recipe.data.recipesToIngredients.map((ingedient) => (
                   <div
                     key={ingedient.id}
                     className=" grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
@@ -69,7 +69,7 @@ export function RecipeCard({ slug }: { slug: string }) {
         Similar With
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {recipe?.query.map((recipes) => (
+        {recipe.query.map((recipes) => (
           <RelatedCard key={recipes.id} recipe={recipes} />
         ))}
       </div>
