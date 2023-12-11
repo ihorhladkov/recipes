@@ -12,7 +12,7 @@ import { RouterOutputs } from "~/trpc/shared";
 export default function CardDemo({
   recipe,
 }: {
-  recipe: RouterOutputs["recipesRouter"]["getAllRecipes"]['data'][number];
+  recipe: RouterOutputs["recipesRouter"]["getAllRecipes"]["data"][number];
 }) {
   return (
     <Link href={`/recipes/${recipe.slug}`}>

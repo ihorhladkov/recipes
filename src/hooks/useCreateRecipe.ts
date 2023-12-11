@@ -11,11 +11,11 @@ export const useCreateRecipe = ({
   setOpen: () => void;
 }) => {
   const utils = api.useUtils();
+  
 
   return api.recipesRouter.createNewRecipe.useMutation({
     onSuccess() {
       utils.recipesRouter.getAllRecipes.invalidate();
-      utils.recipesRouter.getSortedRecipes.invalidate();
       reset();
       setOpen();
       toast({
