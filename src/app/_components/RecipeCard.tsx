@@ -16,13 +16,15 @@ export function RecipeCard({ slug }: { slug: string }) {
 
   return (
     <>
-      <Card className="mx-auto w-full max-w-[450px]">
+      <Card className="mx-auto w-full max-w-[320px] sm:max-w-[450px]">
         <CardHeader className="pb-3">
-          <CardTitle>{recipe?.data?.name}</CardTitle>
+          <CardTitle className="h-10 sm:h-14 w-full overflow-y-scroll">
+            {recipe?.data?.name}
+          </CardTitle>
           <CardDescription>{recipe?.data?.shortDescription}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-1">
-          <div className="-mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 transition-all">
+          <div className="mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 transition-all">
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">Description</p>
               <p className="text-sm text-muted-foreground">
@@ -30,7 +32,7 @@ export function RecipeCard({ slug }: { slug: string }) {
               </p>
             </div>
           </div>
-          <div className="-mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 text-accent-foreground transition-all">
+          <div className="mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 text-accent-foreground transition-all">
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">Category</p>
               <p className="text-sm text-muted-foreground">
@@ -38,7 +40,7 @@ export function RecipeCard({ slug }: { slug: string }) {
               </p>
             </div>
           </div>
-          <div className="-mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 transition-all hover:text-accent-foreground">
+          <div className="mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 transition-all hover:text-accent-foreground">
             <div className="w-full">
               <p className="mb-6 text-sm font-medium uppercase leading-none">
                 Ingredients
@@ -64,10 +66,10 @@ export function RecipeCard({ slug }: { slug: string }) {
         </CardContent>
       </Card>
       <h2 className="my-12 animate-pulse text-center text-5xl uppercase text-purple-100">
-          Similar With
+        Similar With
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {recipe?.query.map(({ recipes }) => (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {recipe?.query.map((recipes) => (
           <RelatedCard key={recipes.id} recipe={recipes} />
         ))}
       </div>

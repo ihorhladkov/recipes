@@ -18,7 +18,7 @@ export default function CardDemo({
     <Link href={`/recipes/${recipe.slug}`}>
       <Card className="flex h-[250px] w-full flex-col">
         <CardHeader>
-          <CardTitle className="">{recipe.name}</CardTitle>
+          <CardTitle className="h-10 w-full max-w-[320px] overflow-y-scroll">{recipe.name}</CardTitle>
           <CardDescription>{recipe.shortDescription}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col justify-between gap-4">

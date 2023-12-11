@@ -20,6 +20,7 @@ export default function RecipesPage() {
       </div>
     );
   }
+  
   return (
     <>
       <section className="flex flex-col items-center justify-center text-white">

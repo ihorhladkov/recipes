@@ -7,8 +7,8 @@ import { cn } from "../lib/utils";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between pb-4">
-      <div className="flex items-center gap-4">
+    <header className="flex flex-col gap-4 sm:flex-row items-center justify-between pb-4">
+      <div className="flex flex-col sm:flex-row items-center gap-4">
         <h2 className="text-slate-50">Logo</h2>
         <Link className={cn(buttonVariants({ variant: "ghost" }))} href={"/"}>
           Home

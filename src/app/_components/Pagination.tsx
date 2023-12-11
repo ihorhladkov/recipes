@@ -26,7 +26,7 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex h-20 max-w-[320px] sm:max-w-[1200px] items-center gap-2 overflow-y-scroll">
       <Button onClick={prevPage} disabled={page === 1 || isFetching}>
         <ArrowLeft />
       </Button>

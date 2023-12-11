@@ -11,7 +11,7 @@ export default function RecipeDetails({
 }) {
   return (
     <>
-      <h1 className="my-12 animate-pulse text-center text-6xl uppercase text-purple-100">
+      <h1 className="my-12 animate-pulse text-center text-4xl uppercase text-purple-100">
         Recipe Information
       </h1>
       <Suspense fallback={<RecipeCardSkeleton />}>

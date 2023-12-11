@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import Link from "next/link";
 
 export default function RelatedCard({
   recipe,
@@ -18,11 +18,15 @@ export default function RelatedCard({
   };
 }) {
   return (
-    <Link href={`/recipes/${recipe.slug}`}>
+    <Link className="w-full" href={`/recipes/${recipe.slug}`}>
       <Card className="flex h-[250px] w-full flex-col">
         <CardHeader>
-          <CardTitle className="">{recipe.name}</CardTitle>
-          <CardDescription>{recipe.shortDescription}</CardDescription>
+          <div>
+            <CardTitle className="h-10 w-full max-w-[320px] overflow-y-scroll">
+              {recipe.name}
+            </CardTitle>
+            <CardDescription>{recipe.shortDescription}</CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-col justify-between gap-4">
           <div>

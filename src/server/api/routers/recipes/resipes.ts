@@ -1,6 +1,6 @@
 import { and, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
-import { ingredients, recipes, recipesToIngredients } from "~/server/db/schema";
+import { recipes, recipesToIngredients } from "~/server/db/schema";
 import { z } from "zod";
 import { SortSchema } from "~/store/searchStore";
 import { TRPCError } from "@trpc/server";
@@ -139,16 +139,25 @@ export const recipesRouter = createTRPCRouter({
       }
 
       const query = await ctx.db
-        .select()
+        .select({
+          id: recipes.id,
+          name: recipes.name,
+          shortDescription: recipes.shortDescription,
+          slug: recipes.slug,
+          author: recipes.author,
+        })
         .from(recipes)
         .leftJoin(
           recipesToIngredients,
+          eq(recipesToIngredients.recipeId, recipes.id),
+        )
+        .where(
           and(
-            eq(recipesToIngredients.recipeId, recipes.id),
             ne(recipes.id, dataId),
+            inArray(recipesToIngredients.ingredientId, [...ingredinetIds]),
           ),
         )
-        .where(inArray(recipesToIngredients.ingredientId, [...ingredinetIds]))
+        .groupBy(recipes.id)
         .limit(3);
 
       return { data, query };

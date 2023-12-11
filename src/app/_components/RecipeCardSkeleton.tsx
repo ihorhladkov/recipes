@@ -4,7 +4,7 @@ import { Card } from "./ui/card";
 
 export function RecipeCardSkeleton() {
   return (
-    <Card className="w-[320px] h-[410px] mx-auto">
+    <Card className="w-[286px] h-[410px] mx-auto">
       <div className="flex gap-x-4 rounded-sm">
         <div className="grid gap-4 pl-4 pt-4">
           <Skeleton className="h-8 w-[250px]" />
