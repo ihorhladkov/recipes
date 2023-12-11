@@ -11,7 +11,6 @@ export const useCreateRecipe = ({
   setOpen: () => void;
 }) => {
   const utils = api.useUtils();
-  
 
   return api.recipesRouter.createNewRecipe.useMutation({
     onSuccess() {
@@ -21,6 +20,13 @@ export const useCreateRecipe = ({
       toast({
         title: "Success",
         description: "The recipe was successfully added",
+      });
+    },
+    
+    onError() {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
       });
     },
   });

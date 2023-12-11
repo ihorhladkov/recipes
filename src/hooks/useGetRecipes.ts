@@ -1,5 +1,4 @@
 import { api } from "~/trpc/react";
-import { useDebounce } from "@uidotdev/usehooks";
 import { useSearchStore } from "~/store/searchStore";
 
 export const useGetRecipes = () => {
