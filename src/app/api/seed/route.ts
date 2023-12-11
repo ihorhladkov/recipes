@@ -19,6 +19,7 @@ async function seed(res: NextApiResponse) {
       shortDescription: "Irresistible chocolate chip cookies.",
       author: "Baker Extraordinaire",
       categoryId: "d7a0a4f7-2b6b-4eab-b38e-7f24c4b9fc78",
+      slug: '123456'
     },
     {
       name: "Fluffy Pancakes",
@@ -27,6 +28,7 @@ async function seed(res: NextApiResponse) {
       shortDescription: "Deliciously fluffy pancakes.",
       author: "Breakfast Lover",
       categoryId: "b163bae5-9c62-4875-8f19-23f004a98d81",
+      slug: '123456'
     },
     {
       name: "Homemade Bread",
@@ -35,6 +37,7 @@ async function seed(res: NextApiResponse) {
       shortDescription: "Warm and crusty homemade bread.",
       author: "Bread Enthusiast",
       categoryId: "e4fc3a97-7f2b-4d72-9259-9c9232a6db0b",
+      slug: '123456'
     },
     {
       name: "Vanilla Cupcakes",
@@ -43,6 +46,7 @@ async function seed(res: NextApiResponse) {
       shortDescription: "Delightful vanilla cupcakes.",
       author: "Cupcake Artist",
       categoryId: "cf2c1de1-8e44-4bf7-9d05-6f90a2b06d1b",
+      slug: '123456'
     },
     {
       name: "Garlic Butter Shrimp Pasta",
@@ -51,6 +55,7 @@ async function seed(res: NextApiResponse) {
       shortDescription: "Garlicky butter shrimp pasta.",
       author: "Chef de Cuisine",
       categoryId: "cf2c1de1-8e44-4bf7-9d05-6f90a2b06d1b",
+      slug: '123456'
     },
   ];
 
