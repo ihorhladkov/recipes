@@ -28,7 +28,7 @@ export const useSearchStore = create<Count>((set) => ({
   prevPage: () => set((state) => ({ page: state.page - 1 })),
   handleSetPage: (pageNumber) => set(() => ({ page: pageNumber })),
   findNew: (newSearchString) =>
-    set(() => ({ searchString: newSearchString.trim() })),
+    set(() => ({ searchString: newSearchString })),
   setSortBy: (newSortType) => set(() => ({ sortBy: newSortType })),
   setElements: (newElements) => set(() => ({ elements: newElements })),
 }));

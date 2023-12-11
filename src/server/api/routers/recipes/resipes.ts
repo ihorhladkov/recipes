@@ -27,10 +27,11 @@ export const recipesRouter = createTRPCRouter({
         );
 
       const count = countResult[0]?.count || 0;
+      const offset = (input.page - 1) * input.elements;
 
       const data = await ctx.db.query.recipes.findMany({
         limit: input.elements,
-        offset: (input.page - 1) * input.elements,
+        offset,
         orderBy: (recipes, { desc }) => [desc(recipes[input.sortBy])],
         with: {
           recipesToIngredients: {
@@ -51,6 +52,7 @@ export const recipesRouter = createTRPCRouter({
         data,
         count,
         totalPage,
+        offset,
       };
     }),
 

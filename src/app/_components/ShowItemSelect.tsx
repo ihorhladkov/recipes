@@ -14,10 +14,14 @@ import {
 import { useSearchStore } from "~/store/searchStore";
 
 export function ShowItemSelect() {
-  const setElements = useSearchStore((state) => state.setElements);
+  const { setElements, elements } = useSearchStore((state) => state);
 
   return (
-    <Select defaultValue="6" onValueChange={(value) => setElements(+value)}>
+    <Select
+      value={`${elements}`}
+      onValueChange={(value) => setElements(+value)}
+      
+    >
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Items on page" />
       </SelectTrigger>
